@@ -15,46 +15,52 @@ import BlogDetails from './Components/BlogDetails/BlogDetails.jsx';
 import Content from './Components/Content/Content.jsx';
 import Aouthor from './Components/aouthor/Aouthor.jsx';
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <App />,
+      children: [
+        {
+          path: '/',
+          element: <Home />,
+        },
+        {
+          path: '/blogs',
+          loader: () => fetch('https://dev.to/api/articles?per_page=20&top=7'),
+          element: <Blogs />,
+        },
+        {
+          path: '/blogDetails/:id',
+          loader: ({ params }) =>
+            fetch(`https://dev.to/api/articles/${params.id}`),
+          element: <BlogDetails />,
+          children: [
+            {
+              index: true,
+              loader: ({ params }) =>
+                fetch(`https://dev.to/api/articles/${params.id}`),
+              element: <Content />,
+            },
+            {
+              path: 'author',
+              loader: ({ params }) =>
+                fetch(`https://dev.to/api/articles/${params.id}`),
+              element: <Aouthor />,
+            },
+          ],
+        },
+        {
+          path: '/bookmarks',
+          element: <Bookmarks />,
+        },
+      ],
+    },
+  ],
   {
-    path: '/',
-    element: <App />,
-    children: [
-      {
-        path: '/',
-        element: <Home />
-      },
-      {
-        path: '/blogs',
-        loader: () => fetch('https://dev.to/api/articles?per_page=20?top=7'),
-        element: <Blogs />
-      },
-      {
-        path:'/blogDetails/:id',
-        loader:({params}) =>fetch(`https://dev.to/api/articles/${params.id}`),
-        element:<BlogDetails></BlogDetails>,
-        children:[
-          {
-            index:true,
-            loader:({params}) =>fetch(`https://dev.to/api/articles/${params.id}`),
-            element:<Content></Content>
-          },
-          {
-            path:'author',
-            loader:({params}) =>fetch(`https://dev.to/api/articles/${params.id}`),
-            element:<Aouthor></Aouthor>
-          }
-        ]
-      },
-
-      {
-        path: '/bookmarks',
-         loader:({params}) =>fetch(`https://dev.to/api/articles/${params.id}`),
-        element: <Bookmarks />
-      }
-    ]
+    basename: '/my-react-byteblaze-route', // 🔥 এই লাইনটাই সবচেয়ে গুরুত্বপূর্ণ GitHub Pages এর জন্য
   }
-]);
+)
 
 
 createRoot(document.getElementById('root')).render(
